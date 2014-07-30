@@ -3,6 +3,7 @@ title: SNworks Developer Docs
 
 toc_footers:
   - <a href="http://getsnworks.com">Main Site</a>
+  - <a href="http://thesnews.github.io/slate-guides/">Guides Dev Docs</a>
   - <a href='http://confluence.getsnworks.com/display/ID/Internal+Documentation+Home'>SNworks Internal Docs</a>
   - <a href="http://confluence.getsnworks.com">Client Support Docs</a>
   - <a href="http://uptime.getsnworks.com/">System Status</a>
@@ -21,7 +22,7 @@ search: true
 <a href="#">foo</a>
 ```
 
-SNworks Developer Docs.
+SNworks Developer Docs for Gryphon Sites. If you're looking for Guides, <a href="http://thesnews.github.io/slate-guides/">look here</a>.
 
 #  Technologies we use
 
