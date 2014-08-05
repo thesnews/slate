@@ -161,7 +161,74 @@ Welcome to <span class="nt">&lt;a</span> <span class="na">href=</span><span clas
 </tbody></table>
 <h2 id='request-helper'>Request Helper</h1><h1 id='coding-for-gryphon'>Coding for Gryphon</h1>
 <p>Creating templates for Gryphon is fairly simple once you have the basics down.</p>
-<h2 id='base-tpl'>base.tpl</h1><h2 id='articlemain-tpl'>article/main.tpl</h1><h2 id='articletemplates'>article/templates</h1><h2 id='authormain-tpl'>author/main.tpl</h1><h2 id='blog'>blog/</h1><h2 id='gallery'>gallery/</h1><h2 id='main'>main/</h1><h2 id='multimedia'>multimedia/</h1><h2 id='page'>page/</h1><h2 id='search'>search/</h1><h2 id='section'>section/</h1><h2 id='view'>view/</h1><h1 id='macros'>Macros</h1><h2 id='article'>article</h1><h2 id='disqus'>disqus</h1><h2 id='render'>render</h1><h2 id='tools'>tools</h1><h1 id='gryphon-cms'>Gryphon CMS</h1>
+<h2 id='base-tpl'>base.tpl</h1><h2 id='articlemain-tpl'>article/main.tpl</h1><h2 id='articletemplates'>article/templates</h1><h2 id='authormain-tpl'>author/main.tpl</h1><h2 id='blog'>blog/</h1><h2 id='basic-gallery'>Basic Gallery</h1><h3 id='gallerymain-tpl'>gallery/main.tpl</h1>
+<p>We use the awesome <a href="http://galleria.io/">Galleria</a> library, which takes care of a lot of the heavy lifting - but adding more custom features requres a bit more setup than the default.</p>
+<pre class="highlight html"><span class="c">&lt;!-- Somehwere in your HTML, where you want the gallery --&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"galleria-{{gallery.uid}}"</span> <span class="na">style=</span><span class="s">"height: 400px;"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre>
+
+<p>First we have to insert some placeholder HTML. Drop this where the gallery should appear, make sure you give it a fixed height or the entire gallery will collapse. The <code class="prettyprint">{{gallery.uid}}</code> helps ensure that the element&rsquo;s ID is unique.</p>
+
+<p>Next at either the bottom of the template, or in the <code class="prettyprint">{% block scripts %}{% endblock %}</code> tags. Then we initialize the gallery:</p>
+<pre class="highlight html"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"{{'assets/dist/galleria/galleria-1.2.9.min.js'|asset}}"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">$</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="c1">// We loop through the gallery's images
+</span>            <span class="p">{</span><span class="o">%</span> <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">gallery</span><span class="p">.</span><span class="nx">mediaOrdered</span> <span class="o">%</span><span class="p">}</span>
+                <span class="p">{</span>
+                    <span class="na">thumb</span><span class="p">:</span> <span class="s2">"{{i.urlPreview}}"</span><span class="p">,</span>
+                    <span class="na">image</span><span class="p">:</span> <span class="s2">"{{i.url}}"</span><span class="p">,</span>
+                    <span class="na">big</span><span class="p">:</span> <span class="s2">"{{i.urlOriginal}}"</span><span class="p">,</span>
+                    <span class="na">title</span><span class="p">:</span> <span class="s2">"{{i.title}}"</span><span class="p">,</span>
+                    <span class="c1">// make sure to escape the caption
+</span>                    <span class="na">description</span><span class="p">:</span> <span class="s2">"{{i.caption_formatted|e('js')}}"</span><span class="p">,</span>
+                    <span class="na">link</span><span class="p">:</span> <span class="s2">"{{i.urlDefault}}"</span>
+                <span class="p">},</span>
+            <span class="p">{</span><span class="o">%</span> <span class="nx">endfor</span> <span class="o">%</span><span class="p">}</span>
+        <span class="p">];</span>
+
+        <span class="c1">// We add this if we're using a custom theme
+</span>        <span class="nx">Galleria</span><span class="p">.</span><span class="nx">loadTheme</span><span class="p">(</span><span class="s1">'{{"assets/dist/galleria/azur/galleria.azur.min.js"|asset}}'</span><span class="p">);</span>
+
+        <span class="nx">Galleria</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span>
+          <span class="c1">// there's our unique ID again
+</span>          <span class="s1">'#galleria-{{gallery.uid}}'</span><span class="p">,</span>
+          <span class="p">{</span><span class="na">showInfo</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span><span class="na">_toggleInfo</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="na">dataSource</span><span class="p">:</span> <span class="nx">data</span><span class="p">}</span>
+        <span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">})(</span><span class="nx">jQuery</span><span class="p">);</span>
+
+<span class="nt">&lt;/script&gt;</span>
+</pre>
+
+<p>Then we loop over each gallery image, in order, and load the image properties into an array. Note that we&rsquo;re escaping the HTML loaded into the caption with Twig&rsquo;s <code class="prettyprint">e</code> escape filter.</p>
+
+<p>Then we initialize Galleria with the element ID we created earlier and the data array we just created.</p>
+<h2 id='advanced-gallery'>Advanced Gallery</h1><h3 id='gallerymain-tpl'>gallery/main.tpl</h1><pre class="highlight javascript"><span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="o">%</span> <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">gallery</span><span class="p">.</span><span class="nx">mediaOrdered</span> <span class="o">%</span><span class="p">}</span>
+        <span class="c1">// create a new placeholder for the caption data
+</span>        <span class="c1">// you can alter any of the properties like this
+</span>        <span class="p">{</span><span class="o">%</span> <span class="nx">set</span> <span class="nx">caption</span> <span class="o">%</span><span class="p">}</span>
+          <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">i</span><span class="p">.</span><span class="nx">caption_formatted</span><span class="p">}}</span> <span class="o">&amp;</span><span class="nx">middot</span><span class="p">;</span> <span class="o">&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s2">"http://"</span><span class="o">&gt;</span><span class="nx">Buy</span> <span class="nx">Photos</span><span class="o">!&lt;</span><span class="sr">/</span><span class="err">a&gt;&lt;/p&gt;</span>
+        <span class="p">{</span><span class="o">%</span> <span class="nx">endset</span> <span class="o">%</span><span class="p">}</span>
+        <span class="p">{</span>
+            <span class="na">thumb</span><span class="p">:</span> <span class="s2">"{{i.urlPreview}}"</span><span class="p">,</span>
+            <span class="na">image</span><span class="p">:</span> <span class="s2">"{{i.url}}"</span><span class="p">,</span>
+            <span class="na">big</span><span class="p">:</span> <span class="s2">"{{i.urlOriginal}}"</span><span class="p">,</span>
+            <span class="na">title</span><span class="p">:</span> <span class="s2">"{{i.title}}"</span><span class="p">,</span>
+            <span class="c1">// then just use the placeholder for the caption. make sure to escape it.
+</span>            <span class="na">description</span><span class="p">:</span> <span class="s2">"{{caption|e('js')}}"</span><span class="p">,</span>
+            <span class="na">link</span><span class="p">:</span> <span class="s2">"{{i.urlDefault}}"</span>
+        <span class="p">},</span>
+    <span class="p">{</span><span class="o">%</span> <span class="nx">endfor</span> <span class="o">%</span><span class="p">}</span>
+<span class="p">];</span>
+</pre>
+
+<p>You can easily modify the caption data in Gallery while creating the data array.</p>
+<h2 id='main'>main/</h1><h2 id='multimedia'>multimedia/</h1><h2 id='page'>page/</h1><h2 id='search'>search/</h1><h2 id='section'>section/</h1><h2 id='view'>view/</h1><h1 id='macros'>Macros</h1><h2 id='article'>article</h1><h2 id='disqus'>disqus</h1><h2 id='render'>render</h1><h2 id='tools'>tools</h1><h1 id='gryphon-cms'>Gryphon CMS</h1>
 <!-- # Authentication
 
 > To authorize, use this code:
