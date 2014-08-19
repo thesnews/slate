@@ -169,6 +169,10 @@ Creating templates for Gryphon is fairly simple once you have the basics down.
 
 # Gryphon CMS
 
+# Using Third-party Services
+
+## Working with Issuu
+
 <!-- # Authentication
 
 > To authorize, use this code:
