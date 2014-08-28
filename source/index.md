@@ -153,6 +153,8 @@ Creating templates for Gryphon is fairly simple once you have the basics down.
 
 ## search/
 
+Proper syntax for advanced search links on other pages (to search with a tag and to sort by most recent): 
+
 ## section/
 
 ## view/
