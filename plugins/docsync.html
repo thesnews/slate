@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>SNworks Developer Docs - DocSync</title>
+    <link rel="icon" type="image/png" href="images/favicon.ico">
+
+    <link href="../stylesheets/screen.css" rel="stylesheet" type="text/css" media="screen" />
+    <link href="../stylesheets/print.css" rel="stylesheet" type="text/css" media="print" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+      <script src="../javascripts/all.js" type="text/javascript"></script>
+
+  </head>
+
+  <body class="plugins plugins_docsync">
+    <a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="../images/navbar.png" />
+      </span>
+    </a>
+    <div class="tocify-wrapper">
+      <img src="../images/logo.png" />
+        <div class="search">
+          <input type="text" class="search" id="input-search" placeholder="Search">
+        </div>
+        <ul class="search-results"></ul>
+      <div id="toc">
+      </div>
+        <ul class="toc-footer">
+            <li><a href="http://getsnworks.com">Main Site</a></li>
+            <li><a href="http://thesnews.github.io/slate-guides/">Guides Dev Docs</a></li>
+            <li><a href='http://confluence.getsnworks.com/display/ID/Internal+Documentation+Home'>SNworks Internal Docs</a></li>
+            <li><a href="http://confluence.getsnworks.com">Client Support Docs</a></li>
+            <li><a href="http://uptime.getsnworks.com/">System Status</a></li>
+            <li><a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a></li>
+        </ul>
+        <div class="toc-copyright">
+          &copy; State News, Inc.
+        </div>
+    </div>
+    <div class="page-wrapper">
+      <div class="dark-box"></div>
+      <div class="content">
+        <h1 id='docsync-plugin'>DocSync Plugin</h1>
+<p>The DocSync plugin provides access to synced Issuu and ScribD documents. It provides a ton more functionality over the previous Issuu and ScribD plugins</p>
+
+<blockquote>
+<p>Load the helper and grab and the most recent Issuu document</p>
+</blockquote>
+<pre class="highlight html">{% helper docSyncDocument %}
+{% set doc = docSyncDocument.issuu.order('created', 'desc').first() %}
+<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{{doc.url}}"</span><span class="nt">&gt;&lt;img</span> <span class="na">src=</span><span class="s">"{{doc.urlPreview}}"</span> <span class="nt">/&gt;</span>
+</pre>
+
+<p>Using the updated fluent syntax you can easily grab and filter documents for both Issuu and Scribd.</p>
+
+<p>Using the fluent interface you can easily limit, sort, search in folders and tags:</p>
+
+<ul>
+<li><code class="prettyprint">order(&#39;WHAT ORDER&#39;)</code> - Order the results, usually this is just &lsquo;created desc&rsquo; for the most recent</li>
+<li><code class="prettyprint">limit(NUMBER)</code> - Limit number of returned results</li>
+<li><code class="prettyprint">inFolder(&#39;FOLDER NAME&#39;)</code> - Fetch documents that are part of a collection (ScribD) or stack (Issuu)</li>
+<li><code class="prettyprint">withTags(&#39;TAG1&#39;, &#39;TAG2&#39;, ...)</code> - Fetch documents with given tags (ScribD only)</li>
+<li><code class="prettyprint">find()</code> - Fetch the items based on the filters</li>
+<li><code class="prettyprint">first()</code> - Fetch and return only the first item that matches the filters</li>
+</ul>
+<h1 id='meta-properties'>Meta Properties</h1>
+<p>Each document system (Issuu and ScribD) provides a number of different meta properties. The plugin tracks everything that comes with the sync under the <code class="prettyprint">meta</code> property. For instance - you can use <code class="prettyprint">{{doc.meta.title}}</code> to get the file title for ScribD docs, or <code class="prettyprint">{{doc.meta.name}}</code> in Issuu.</p>
+<h3 id='issuu-meta-properties'>Issuu Meta Properties</h1>
+<ul>
+<li>meta.username</li>
+<li>meta.name - file name</li>
+<li>meta.documentId</li>
+<li>meta.uploadTimestamp</li>
+<li>meta.created</li>
+<li>meta.title - file title</li>
+<li>meta.access</li>
+<li>meta.orgDocType - original document type (i.e. pdf)</li>
+<li>meta.orgDocName - original file name</li>
+<li>meta.likes</li>
+<li>meta.commentsAllowed</li>
+<li>meta.pageCount</li>
+<li>meta.publicationCreationTime</li>
+<li>meta.publishDate</li>
+<li>meta.publicOnIssuuTime</li>
+<li>meta.description</li>
+<li>meta.folders - array of folder ids</li>
+<li>meta.coverWidth</li>
+<li>meta.coverHeight</li>
+<li>meta.embed - <strong>embed is only available with pro accounts</strong></li>
+</ul>
+<h3 id='scribd-meta-properties'>ScribD Meta Properties</h1>
+<ul>
+<li>meta.doc_id</li>
+<li>meta.title</li>
+<li>meta.description</li>
+<li>meta.thumbnail_url</li>
+<li>meta.conversion_status</li>
+<li>meta.page_count</li>
+<li>meta.when_uploaded</li>
+<li>meta.when_updated</li>
+<li>meta.block_count</li>
+<li>meta.reads</li>
+<li>meta.authors</li>
+</ul>
+<h3 id='common-helpers'>Common Helpers</h1>
+<p>In addition to the meta properties, the plugin also provides simple accessors to common properties</p>
+
+<ul>
+<li><code class="prettyprint">url</code> - url to the original document</li>
+<li><code class="prettyprint">urlPreview</code> - url for the document thumbnail</li>
+</ul>
+<pre class="highlight html">{% helper docSyncDocument %}
+{% set doc = docSyncDocument.issuu.inFolder('My Sweet Folder').first() %}
+
+<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{{doc.url}}"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">"{{doc.urlPreview}}"</span> <span class="nt">/&gt;</span>
+    View {{doc.meta.title}}
+<span class="nt">&lt;/a&gt;</span>
+</pre>
+<h1 id='examples'>Examples</h1><h2 id='example-issuu-document-in-a-stack'>Example: Issuu document in a stack</h1><pre class="highlight html">{% helper docSyncDocument %}
+{% set doc = docSyncDocument.issuu.inFolder('My Sweet Folder').first() %}
+<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{{doc.url}}"</span><span class="nt">&gt;&lt;img</span> <span class="na">src=</span><span class="s">"{{doc.urlPreview}}"</span> <span class="nt">/&gt;</span>
+</pre>
+
+<p>Using the <code class="prettyprint">inFolder</code> method you can select only those docs that are part of a collection (ScribD) or stack (Issuu).</p>
+<h2 id='example-scribd-documents-in-a-folder-with-a-tag'>Example: ScribD documents in a folder with a tag</h1><pre class="highlight html">{% helper docSyncDocument %}
+{% set docs = docSyncDocument.scribd
+    .inFolder('My Sweet Folder')
+    .withTags('tagname1')
+    .find() %}
+
+{% for doc in docs %}
+    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{{doc.url}}"</span><span class="nt">&gt;&lt;img</span> <span class="na">src=</span><span class="s">"{{doc.urlPreview}}"</span> <span class="nt">/&gt;</span>
+{% endfor %}
+</pre>
+
+<p>Using the <code class="prettyprint">inFolder</code> and <code class="prettyprint">withTags</code> methods you can filter by collection and tag.</p>
+
+      </div>
+      <div class="dark-box">
+      </div>
+    </div>
+  </body>
+</html>
